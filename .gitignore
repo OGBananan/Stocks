@@ -1,9 +1,16 @@
-# Ignore environment files
+# Ignore environment files and directories
 .env
 *.env
+env/
 
 # Ignore SSH keys
 *.pem
 *.key
+personal
+personal.pub
 id_rsa
 id_rsa.pub
+
+# Ignore any other common sensitive files
+*.crt
+*.csr
