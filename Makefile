@@ -6,16 +6,16 @@ DOCKER_COMPOSE = docker-compose
 .PHONY: help run stop clean test cli
 
 help:
-	@echo Please use 'make <target>' where <target> is one of:
-	@echo "  run         to build and run Docker containers"
-	@echo "  stop        to stop Docker containers"
-	@echo "  clean       to stop Docker containers and remove volumes"
-	@echo "  test        to run tests inside Docker"
-	@echo "  cli         to run Django CLI inside Docker"
+	@echo "Please use 'make <target>' where <target> is one of:"
+	@echo "  run     to build and run Docker containers"
+	@echo "  stop    to stop Docker containers"
+	@echo "  clean   to stop Docker containers and remove volumes"
+	@echo "  test    to run tests inside Docker"
+	@echo "  cli     to run Django CLI inside Docker"
 
 # Build and run the Docker containers
 run:
-	$(DOCKER_COMPOSE) up --build
+	$(DOCKER_COMPOSE)	up	--build
 
 # Stop the Docker containers
 stop:
