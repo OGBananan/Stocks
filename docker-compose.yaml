@@ -9,17 +9,19 @@ services:
     ports:
       - "8000:8000"
     depends_on:
-      - mysql
+      - mysql-service
 
-  mysql:
-    image: mysql:8.0
+  mysql-service:
+    image: mysql:latest
     environment:
-      MYSQL_ROOT_PASSWORD: mypassword
-      MYSQL_DATABASE: stock_db  # Replace 'mydb' with your desired database name
+      MYSQL_DATABASE: ${DB_NAME}
+      MYSQL_USER: ${DB_USER}
+      MYSQL_PASSWORD: ${DB_PASSWORD}
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
     ports:
       - "3306:3306"
     volumes:
-      - mysql-data:/var/lib/mysql
+      - mysql_data:/var/lib/mysql
 
 volumes:
-  mysql-data:
+  mysql_data:

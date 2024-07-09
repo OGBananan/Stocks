@@ -9,9 +9,9 @@ https://docs.djangoproject.com/en/5.0/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.0/ref/settings/
 """
-
+import os
 from pathlib import Path
-
+from dotenv import load_env
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -74,13 +74,25 @@ WSGI_APPLICATION = 'stocks.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': BASE_DIR / 'db.sqlite3',
+#     }
+# }
+
+load_env()
+
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': os.getenv('DB_NAME'),    # Replace with your DB_NAME from .env
+        'USER': os.getenv('DB_USER'),          # Replace with your DB_USER from .env
+        'PASSWORD': os.getenv('DB_PASSWORD'),  # Replace with your DB_PASSWORD from .env
+        'HOST': 'db',     # Replace with your DB_HOST from .env (or 'db' if using Docker)
+        'PORT': '3306',          # Replace with your DB_PORT from .env
     }
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/5.0/ref/settings/#auth-password-validators
