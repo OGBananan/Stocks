@@ -1,0 +1,10 @@
+django
+djangorestframework
+requests
+pydantic
+pytest
+django-cors-headers
+drf-yasg
+djangorestframework-simplejwt
+dotenv
+mysqlclient

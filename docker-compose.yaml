@@ -3,25 +3,23 @@ version: '3.8'
 services:
   web:
     build: .
-    command: python manage.py runserver 0.0.0.0:8000
+    command: ["python", "stocks/manage.py", "runserver", "0.0.0.0:8000"]
     volumes:
       - .:/app
     ports:
       - "8000:8000"
-    env_file:
-      - .env
     depends_on:
-      - db
+      - mysql
 
-  db:
+  mysql:
     image: mysql:8.0
-    restart: always
     environment:
-      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
-      MYSQL_DATABASE: ${DB_NAME}
-      MYSQL_USER: ${DB_USER}
-      MYSQL_PASSWORD: ${DB_PASSWORD}
-    volumes:
-          - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+      MYSQL_ROOT_PASSWORD: mypassword
+      MYSQL_DATABASE: stock_db  # Replace 'mydb' with your desired database name
     ports:
       - "3306:3306"
+    volumes:
+      - mysql-data:/var/lib/mysql
+
+volumes:
+  mysql-data:
