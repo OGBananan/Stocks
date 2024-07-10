@@ -51,7 +51,7 @@ test:
 
 # Run Django CLI inside Docker
 cli:
-	@docker-compose exec web python manage.py shell
+	@docker-compose exec stocks_backend sh
 
 # Refresh MySQL database connection
 refresh-db:

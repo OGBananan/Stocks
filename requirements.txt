@@ -8,3 +8,4 @@ drf-yasg
 djangorestframework-simplejwt
 python-dotenv
 mysqlclient
+django-rest-swagger
