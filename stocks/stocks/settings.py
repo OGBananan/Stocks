@@ -11,7 +11,8 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 """
 import os
 from pathlib import Path
-from dotenv import load_env
+from dotenv import load_dotenv
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -20,7 +21,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-&f1^egb^hic!msq)&%6p!-hxyy#7z9p@kf_cij#7$k27#@xmd^'
+SECRET_KEY = os.getenv('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -36,7 +37,7 @@ INSTALLED_APPS = [
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
-    'django.contrib.staticfiles',
+    # 'django.contrib.staticfiles',
     'common_utils'
 ]
 
@@ -81,16 +82,16 @@ WSGI_APPLICATION = 'stocks.wsgi.application'
 #     }
 # }
 
-load_env()
+load_dotenv()
 
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': os.getenv('DB_NAME'),    # Replace with your DB_NAME from .env
-        'USER': os.getenv('DB_USER'),          # Replace with your DB_USER from .env
-        'PASSWORD': os.getenv('DB_PASSWORD'),  # Replace with your DB_PASSWORD from .env
-        'HOST': 'db',     # Replace with your DB_HOST from .env (or 'db' if using Docker)
-        'PORT': '3306',          # Replace with your DB_PORT from .env
+        'NAME': os.getenv('DB_NAME', 'default_db_name'),
+        'USER': os.getenv('DB_USER', 'default_db_user'),
+        'PASSWORD': os.getenv('DB_PASSWORD', 'default_db_password'),
+        'HOST': os.getenv('DB_HOST', 'db'),
+        'PORT': os.getenv('DB_PORT', '3306'),
     }
 }
 
@@ -128,7 +129,7 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.0/howto/static-files/
 
-STATIC_URL = 'static/'
+# STATIC_URL = 'static/'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field

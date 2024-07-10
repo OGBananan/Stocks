@@ -3,14 +3,13 @@ include .env
 export
 
 # Define phony targets to avoid conflicts with file names
-.PHONY: help setup-db run stop clean test cli create-db refresh-db drop-db exec-sql mysql-shell debug view restart build
+.PHONY: help run stop clean test cli create-db refresh-db drop-db exec-sql mysql-shell debug view restart build
 
 # Help target to display available targets and their descriptions
 help:
 	@echo "Please use 'make <target>' where <target> is one of:"
-	@echo "  setup-db      to setup MySQL server"
-	@echo "  create-db     to create MySQL database and user"
 	@echo "  build         to build Docker images"
+	@echo "  create-db     to create MySQL database and user"
 	@echo "  run           to build and run Docker containers"
 	@echo "  stop          to stop Docker containers"
 	@echo "  clean         to stop Docker containers and remove volumes"
@@ -24,19 +23,15 @@ help:
 	@echo "  view          to view Docker containers"
 	@echo "  restart       to restart Docker containers"
 
-# Setup MySQL server using Docker Compose
-setup-db:
-	@docker-compose up -d mysql-service
-
 # Create MySQL database and user
 create-db:
-	@docker-compose exec mysql-service mysql -uroot -p${DB_ROOT_PASSWORD} -e "CREATE DATABASE IF NOT EXISTS ${DB_NAME};"
-	@docker-compose exec mysql-service mysql -uroot -p${DB_ROOT_PASSWORD} -e "CREATE USER IF NOT EXISTS ${DB_USER}@'%' IDENTIFIED BY '${DB_PASSWORD}';"
-	@docker-compose exec mysql-service mysql -uroot -p${DB_ROOT_PASSWORD} -e "GRANT ALL PRIVILEGES ON ${DB_NAME}.* TO ${DB_USER}@'%';"
+	@docker-compose exec db mysql -uroot -p${DB_ROOT_PASSWORD} -e "CREATE DATABASE IF NOT EXISTS ${DB_NAME};"
+	@docker-compose exec db mysql -uroot -p${DB_ROOT_PASSWORD} -e "CREATE USER IF NOT EXISTS ${DB_USER}@'%' IDENTIFIED BY '${DB_PASSWORD}';"
+	@docker-compose exec db mysql -uroot -p${DB_ROOT_PASSWORD} -e "GRANT ALL PRIVILEGES ON ${DB_NAME}.* TO ${DB_USER}@'%';"
 
 # Build Docker containers
 build:
-	@docker-compose up --build
+	@docker-compose build
 
 # Run Docker containers
 run:
@@ -60,19 +55,19 @@ cli:
 
 # Refresh MySQL database connection
 refresh-db:
-	@docker-compose exec mysql-service mysqladmin -uroot -p${DB_PASSWORD} refresh
+	@docker-compose exec db mysqladmin -uroot -p${DB_PASSWORD} refresh
 
 # Drop MySQL database
 drop-db:
-	@docker-compose exec mysql-service mysql -uroot -p${DB_PASSWORD} -e "DROP DATABASE IF EXISTS ${DB_NAME};"
+	@docker-compose exec db mysql -uroot -p${DB_PASSWORD} -e "DROP DATABASE IF EXISTS ${DB_NAME};"
 
 # Execute SQL command in MySQL
 exec-sql:
-	@docker-compose exec mysql-service mysql -uroot -p${DB_PASSWORD} -e "${SQL}"
+	@docker-compose exec db mysql -uroot -p${DB_PASSWORD} -e "${SQL}"
 
 # Access MySQL shell
 mysql-shell:
-	@docker-compose exec mysql-service mysql -uroot -p${DB_PASSWORD} ${DB_NAME}
+	@docker-compose exec db mysql -uroot -p${DB_PASSWORD} ${DB_NAME}
 
 # Debug target to print environment variables
 debug:
