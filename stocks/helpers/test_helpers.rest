@@ -1,0 +1,34 @@
+### Test GET
+GET http://localhost:8000/health
+Content-Type: application/json
+
+###
+
+### Test POST
+POST http://localhost:8000/health
+Content-Type: application/json
+
+{
+    "health": "Health check for POST APIs"
+}
+
+###
+
+### Test PATCH
+PATCH http://localhost:8000/health
+Content-Type: application/json
+
+{
+    "health": "Health check for PATCH APIs"
+}
+
+###
+
+### Test DELETE
+DELETE http://localhost:8000/health
+Content-Type: application/json
+
+
+
+
+
