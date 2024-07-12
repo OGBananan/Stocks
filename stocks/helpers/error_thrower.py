@@ -8,40 +8,22 @@ from django.http import (
     HttpResponseServerError,
     HttpResponseGone,
     HttpResponseNotAllowed,
-    HttpResponseConflict,
-    HttpResponseUnsupportedMediaType,
-    HttpResponseNotImplemented,
-    HttpResponseBadGateway,
-    HttpResponseServiceUnavailable,
-    HttpResponseGatewayTimeout,
 )
 
 
 
-def throw_error(self) -> error_thrower:
-    if self.status_code == 400:
-        raise HttpResponseBadRequest(self.message)
-    elif self.status_code == 401:
-        raise HttpResponseUnauthorized(self.message)  # Replace with appropriate class if needed
-    elif self.status_code == 403:
-        raise HttpResponseForbidden(self.message)
-    elif self.status_code == 404:
-        raise HttpResponseNotFound(self.message)
-    elif self.status_code == 405:
-        raise HttpResponseNotAllowed(self.message)  # Method Not Allowed
-    elif self.status_code == 409:
-        raise HttpResponseConflict(self.message)
-    elif self.status_code == 410:
-        raise HttpResponseGone(self.message)
-    elif self.status_code == 415:
-        raise HttpResponseUnsupportedMediaType(self.message)
-    elif self.status_code == 500:
-        raise HttpResponseServerError(self.message)
-    elif self.status_code == 501:
-        raise HttpResponseNotImplemented(self.message)
-    elif self.status_code == 502:
-        raise HttpResponseBadGateway(self.message)
-    elif self.status_code == 503:
-        raise HttpResponseServiceUnavailable(self.message)
+def throw_error(status_code, message) -> error_thrower:
+    if status_code == 400:
+        raise HttpResponseBadRequest(message)
+    elif status_code == 403:
+        raise HttpResponseForbidden(message)
+    elif status_code == 404:
+        raise HttpResponseNotFound(message)
+    elif status_code == 405:
+        raise HttpResponseNotAllowed(message)  # Method Not Allowed
+    elif status_code == 410:
+        raise HttpResponseGone(message)
+    elif status_code == 500:
+        raise HttpResponseServerError(message)
     else:
-        raise HttpResponseServerError(self.message)  # Default to Server Error for unrecognized codes
+        raise HttpResponse(message , status = status_code)
