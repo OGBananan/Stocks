@@ -20,7 +20,7 @@ def throw_error(status_code, message) -> error_thrower:
     elif status_code == 404:
         raise HttpResponseNotFound(message)
     elif status_code == 405:
-        raise HttpResponseNotAllowed(message)  # Method Not Allowed
+        raise HttpResponseNotAllowed(message)
     elif status_code == 410:
         raise HttpResponseGone(message)
     elif status_code == 500:
