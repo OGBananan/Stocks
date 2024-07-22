@@ -2,13 +2,14 @@
 
 from django.http import HttpRequest, JsonResponse
 from django.views import View
-from .schemas.test_api import (TestPostRequest,
+from error_helper import throw_error
+from schemas.test_api import (TestPostRequest,
                             TestPostResponse,
                             TestGetResponse,
                             TestPatchRequest,
                             TestPatchResponse,
                             TestDeleteResponse)
-from .schemas.request_helper import PostController
+from schemas.request_helper import PostController
 from .models import HealthCheck
 from django.utils.decorators import classonlymethod
 from asgiref.sync import sync_to_async
