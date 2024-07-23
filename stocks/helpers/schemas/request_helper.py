@@ -1,3 +1,4 @@
+import json
 from abc import ABC, abstractmethod
 from typing import Type
 from pydantic import BaseModel
@@ -12,9 +13,9 @@ class BaseController(ABC):
             raise ValueError(f"Invalid data: {e}")
 
 class PostController(BaseController):
-    def serialize_request(self, request: HttpRequest, model_cls: Type[BaseModel]) -> BaseModel:
+    def serialize_request(self, request: HttpRequest, request_model: Type[BaseModel]) -> BaseModel:
         try:
-            data = model_cls(**request.POST.dict())
-            return data
+            data = json.loads(request.body)
+            return request_model(**data).dict()
         except Exception as e:
             raise ValueError(f"Invalid data: {e}")

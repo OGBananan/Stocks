@@ -1,66 +1,60 @@
-# yourapp/controllers.py
-
-from django.http import HttpRequest, JsonResponse
+import datetime
 from django.views import View
-from .schemas.test_api import (TestPostRequest,
-                            TestPostResponse,
-                            TestGetResponse,
-                            TestPatchRequest,
-                            TestPatchResponse,
-                            TestDeleteResponse)
-from .schemas.request_helper import PostController
+from django.http import JsonResponse, HttpRequest
+from django.forms.models import model_to_dict
+from django.views.decorators.csrf import csrf_exempt
+from django.utils.decorators import method_decorator
 from .models import HealthCheck
-from django.utils.decorators import classonlymethod
-from asgiref.sync import sync_to_async
+from .schemas.test_api import HealthCheckSchema, HealthCheckCreateSchema, HealthCheckUpdateSchema
+from .schemas.request_helper import PostController
 
 
+@method_decorator(csrf_exempt, name='dispatch')
 class TestHealth(PostController, View):
 
-    @classonlymethod
-    def as_view(cls, **initkwargs):
-        view = super().as_view(**initkwargs)
-        view._is_coroutine = lambda _: True
-        return view
-
-    async def get(self, request: HttpRequest) -> JsonResponse:
+    def get(self, request) -> JsonResponse:
         try:
-            latest_health = await sync_to_async(HealthCheck.objects.latest)('created_at')
-            response_data = TestGetResponse(latest_health_check={
-                                            "health": latest_health.health, "timestamp": latest_health.created_at})
-            return self.serialize_response(TestGetResponse, response_data.dict())
+            latest_health = HealthCheck.objects.latest('created_at').__dict__
+            return self.serialize_response(HealthCheckSchema, latest_health)
         except HealthCheck.DoesNotExist:
             return JsonResponse({"error": "No health check records found"}, status=404)
         except ValueError as e:
             return JsonResponse({"error": str(e)}, status=400)
 
-    async def post(self, request: HttpRequest) -> JsonResponse:
+    def post(self, request: HttpRequest, *args, **kwargs) -> JsonResponse:
         try:
-            request_data = self.serialize_request(request, TestPostRequest)
-            new_health_check = await sync_to_async(HealthCheck.objects.acreate)(health=request_data.health)
-            response_data = TestPostResponse(success=new_health_check.health)
-            return self.serialize_response(TestPostResponse, response_data.dict())
+            health_check_data = self.serialize_request(
+                request, HealthCheckCreateSchema)
+            if not health_check_data['health']:
+                return JsonResponse({"error": "Health check must be true"}, status=400)
+            health_check = HealthCheck.objects.create(health=health_check_data['health'],
+                                                    created_at=datetime.datetime.now().timestamp(),
+                                                    updated_at=datetime.datetime.now().timestamp()
+                                                    )
+            response_data = model_to_dict(health_check)
+            return JsonResponse({"success": "True"}, status=200)
         except ValueError as e:
             return JsonResponse({"error": str(e)}, status=400)
 
-    async def patch(self, request: HttpRequest) -> JsonResponse:
+    def patch(self, request , *args, **kwargs) -> JsonResponse:
         try:
-            request_data = self.serialize_request(request, TestPatchRequest)
-            latest_health = await sync_to_async(HealthCheck.objects.latest)('created_at')
-            latest_health.health = request_data.health
-            await sync_to_async(latest_health.save)()
-            response_data = TestPatchResponse(success=latest_health.health)
-            return self.serialize_response(TestPatchResponse, response_data.dict())
+            request_data = self.serialize_request(
+                    request,HealthCheckUpdateSchema)
+            health_check = HealthCheck.objects.get(id=request_data.get('id'))
+            health_check.health = request_data['health']
+            health_check.updated_at = datetime.datetime.now().timestamp()
+            health_check.save()
+            return JsonResponse({"success": True}, status=200)
         except HealthCheck.DoesNotExist:
             return JsonResponse({"error": "No health check records found to update"}, status=404)
         except ValueError as e:
             return JsonResponse({"error": str(e)}, status=400)
 
-    async def delete(self, request: HttpRequest) -> JsonResponse:
+    def delete(self, request) -> JsonResponse:
         try:
-            latest_health = await sync_to_async(HealthCheck.objects.latest)('created_at')
-            await sync_to_async(latest_health.delete)()
-            response_data = TestDeleteResponse(success=True)
-            return self.serialize_response(TestDeleteResponse, response_data.dict())
+            latest_health = HealthCheck.objects.latest('created_at')
+            latest_health.delete()
+            return JsonResponse({"success": True}, status=204)
         except HealthCheck.DoesNotExist:
             return JsonResponse({"error": "No health check records found to delete"}, status=404)
         except ValueError as e:

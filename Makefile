@@ -3,7 +3,7 @@ include .env
 export
 
 # Define phony targets to avoid conflicts with file names
-.PHONY: help run stop clean test cli create-db refresh-db drop-db exec-sql mysql-shell debug view restart build
+.PHONY: help run stop clean test cli create-db refresh-db drop-db exec-sql mysql-shell debug view restart build migrate
 
 # Help target to display available targets and their descriptions
 help:
@@ -22,6 +22,7 @@ help:
 	@echo "  debug         to print environment variables"
 	@echo "  view          to view Docker containers"
 	@echo "  restart       to restart Docker containers"
+	@echo "  migrate       to run Django migrations"
 
 # Create MySQL database and user
 create-db:
@@ -63,11 +64,11 @@ drop-db:
 
 # Execute SQL command in MySQL
 exec-sql:
-	@docker-compose exec db mysql -uroot -p${DB_PASSWORD} -e "${SQL}"
+	@docker-compose exec db mysql -uroot -p${DB_ROOT_PASSWORD} -e "${SQL}"
 
 # Access MySQL shell
 mysql-shell:
-	@docker-compose exec db mysql -uroot -p${DB_PASSWORD} ${DB_NAME}
+	@docker-compose exec db mysql -uroot -p${DB_ROOT_PASSWORD} ${DB_NAME}
 
 # Debug target to print environment variables
 debug:
@@ -83,3 +84,6 @@ view:
 restart:
 	@docker-compose down
 	@docker-compose up --build
+
+migrate:
+	@docker-compose exec stocks_backend sh -c "cd stocks/ && python manage.py makemigrations && python manage.py migrate"

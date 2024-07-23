@@ -1,31 +1,32 @@
 ### Test GET
-GET http://localhost:8000/health
+GET http://localhost:8000/helper/health
 Content-Type: application/json
 
 ###
 
 ### Test POST
-POST http://localhost:8000/health
+POST http://localhost:8000/helper/health/
 Content-Type: application/json
 
 {
-    "health": "Health check for POST APIs"
+    "health": true
 }
 
 ###
 
 ### Test PATCH
-PATCH http://localhost:8000/health
+PATCH http://localhost:8000/helper/health/
 Content-Type: application/json
 
 {
-    "health": "Health check for PATCH APIs"
+    "id": 3,
+    "health": false
 }
 
 ###
 
 ### Test DELETE
-DELETE http://localhost:8000/health
+DELETE http://localhost:8000/helper/health/
 Content-Type: application/json
 
 
