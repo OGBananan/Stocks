@@ -1,19 +1,16 @@
 from pydantic import BaseModel
+from typing import Optional
+from datetime import datetime
 
-class TestPostRequest(BaseModel):
+class HealthCheckSchema(BaseModel):
+    id: int
+    health: bool
+    created_at: Optional[datetime]
+    updated_at: Optional[datetime]
+
+class HealthCheckCreateSchema(BaseModel):
     health: bool
 
-class TestPostResponse(BaseModel):
-    success: bool
-
-class TestGetResponse(BaseModel):
-    latest_health_check: dict  # Assuming this contains the health status and possibly a timestamp
-
-class TestPatchRequest(BaseModel):
+class HealthCheckUpdateSchema(BaseModel):
+    id: int
     health: bool
-
-class TestPatchResponse(BaseModel):
-    success: bool
-
-class TestDeleteResponse(BaseModel):
-    success: bool
